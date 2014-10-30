@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jRange : jQuery Range Selector</title>
+	<link rel="stylesheet" href="normalize.css">
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="prism/prism.css">
+	<link rel="stylesheet" href="../jquery.range.css">
+	<link href='http://fonts.googleapis.com/css?family=Raleway:100,300' rel='stylesheet' type='text/css'>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+    <section class="pane header">
+        <div class="header">
+            <h1>jRange</h1>
+            <h2>jQuery Plugin to create Range Selector</h2>
+        </div>
+        <footer>
+            <div class="left">
+                <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://github.com/nitinhayaran/jRange" data-text="jRange - jQuery plugin for Range Selector" data-count="none" data-via="nitinhayaran">Tweet</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                <iframe src="http://ghbtns.com/github-btn.html?user=nitinhayaran&amp;repo=jRange&amp;type=watch&amp;count=false&amp;size=small"
+                  allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
+            </div>
+            <div class="right">
+                <a href="https://twitter.com/nitinhayaran" class="twitter-follow-button" data-show-count="false">Follow @nitinhayaran</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                <iframe src="http://ghbtns.com/github-btn.html?user=nitinhayaran&amp;type=follow&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="153" height="20"></iframe>
+            </div>
+        </footer>
+    </section>
+    <section class="body demo">
+        <div class="container">
+            <h2>See it in Action</h2>
+            <h3>Play around with the demo</h3>
+            <div class="demo-container clearfix">
+            	<div class="demo-section">
+            		<div class="demo-code">
+            			<pre><code class="language-javascript">$('.single-slider').jRange({
+    from: 1,
+    to: 100,
+    step: 1,
+    scale: [1,50,100],
+    format: '%s',
+    width: 300,
+    showLabels: true
+});</code></pre>
+            		</div>
+            		<div class="demo-output">
+            			<input class="single-slider" type="hidden" value="25"/>
+            		</div>
+            	</div>
+            	<div class="demo-section">
+            		<div class="demo-code">
+            			<pre><code class="language-javascript">$('.range-slider').jRange({
+    from: 1,
+    to: 100,
+    step: 1,
+    scale: [1,25,50,75,100],
+    format: '%s',
+    width: 300,
+    showLabels: true,
+    isRange : true
+});</code></pre>
+            		</div>
+            		<div class="demo-output">
+            			<input class="range-slider" type="hidden" value="25,75"/>
+            		</div>
+            	</div>
+
+
+            </div>
+            <div class="text-container">
+                <h2>How to Use</h2>
+                <h3>Lets see some code</h3>
+                <p>To get started you'll have to include <code>jquery.range.js</code> and <code>jquery.range.css</code> files in your html file.</p>
+                <pre><code class="language-css">&lt;link rel="stylesheet" href="jquery.range.css"&gt;
+&lt;script src="jquery.range.js"&gt;&lt;/script&gt;</code></pre>
+				<p>Later just add an hidden input, where ever you want this slider to be shown.</p>
+				<pre><code class="language-css">&lt;input type="hidden" class="slider-input" value="23" /&gt;</code></pre>
+				<p>After this you'll have to intialize this plugin for that input, as shown in the example above</p>
+
+                <h2>Options</h2>
+                <h3>See configuration options</h3>
+                <p>Options can also be set programatically, by passing an options hash to the jRange method.
+                <table class="plugin-options" width='900'>
+                    <tr>
+                        <th>Option</th>
+                        <th width="200">Override</th>
+                        <th>Type</th>
+                        <th>Details</th>
+                    </tr>
+                    <tr>
+                        <td>from</td>
+                        <td>Mandatory</td>
+                        <td>Integer</td>
+                        <td>Lower bound of slider</td>
+                    </tr>
+                    <tr>
+                        <td>to</td>
+                        <td>Mandatory</td>
+                        <td>Integer</td>
+                        <td>Upper bound of slider</td>
+                    </tr>
+                    <tr>
+                        <td>step</td>
+                        <td>Optional</td>
+                        <td>Integer</td>
+                        <td>
+                        	<code>Default : 1</code>
+                        	<p>amount of increment on each step</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>scale</td>
+                        <td>Optional</td>
+                        <td>Array</td>
+                        <td>
+                        	<p>Array containing label which are shown below the slider. By default its [from, to].</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>showLabels</td>
+                        <td>Optional</td>
+                        <td>Boolean</td>
+                        <td>
+                        	<p>True if you'd like to hide label which are shown on top of slider.</p>
+                        	<code>Default : false</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>format</td>
+                        <td>Optional</td>
+                        <td>String / Function</td>
+                        <td>
+                        	<p>this is used to show label on the pointer</p>
+                        	<code>Default : "%s"</code>
+                        	<p><code>String</code> : %s is replaced by its value, e.g., "%s days", "%s goats"</p>
+                        	<p><code>Function</code> : should return string label for a given value.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>width</td>
+                        <td>Optional</td>
+                        <td>Integer</td>
+                        <td>
+                        	<code>Default : 300</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>theme</td>
+                        <td>Optional</td>
+                        <td>String</td>
+                        <td>
+                        	<code>Default : "theme-green"</code>
+                            <p>This is the css class name added to the container. Available themes are "theme-blue", "theme-green". You can also add more themes, just like in <code>jquery.range.less</code></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>isRange</td>
+                        <td>Optional</td>
+                        <td>Boolean</td>
+                        <td>
+                            <code>Default : false</code>
+                            <p>True if this is a range selector. If its a range the value of hidden input will be set comma-seperated, e.g., "25,75"</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>onstatechange</td>
+                        <td>Optional</td>
+                        <td>Function</td>
+                        <td>
+                           <p>This function is called whenever the value is changed by user. This same value is also automatically set for the provided Hidden Input.</p>
+                           <p>For single slider value is without comma, however for a range selector value is comma-seperated.</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="footer">
+                    <a href="https://github.com/nitinhayaran/jRange" class="large-github">Get it from Github</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="footer">
+        <div class="text-container clearfix">
+            <div class="left">
+                <p>
+                    <a href="https://twitter.com/nitinhayaran" class="twitter-follow-button" data-show-count="false">Follow @nitinhayaran</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                </p>
+                <p><iframe src="http://ghbtns.com/github-btn.html?user=nitinhayaran&amp;type=follow&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="153" height="20"></iframe></p>
+            </div>
+            <div class="right">
+                <p><a href="https://github.com/nitinhayaran/jRange">jRange</a> is authored and maintained by <a href="https://github.com/nitinhayaran/">@nitinhayaran</a></p>
+                <p>
+                    Released under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT
+                      License</a>
+                  </p>
+            </div>
+        </div>
+    </section>
+    <script src="prism/prism.js"></script>
+
+    <script src="../jquery.range.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.single-slider').jRange({
+                from: 1,
+                to: 100,
+                step: 1,
+                scale: [1,25,50,75,100],
+                format: '%s',
+                width: 300,
+                showLabels: true
+            });
+            $('.range-slider').jRange({
+                from: 1,
+                to: 100,
+                step: 1,
+                scale: [1,25,50,75,100],
+                format: '%s',
+                width: 300,
+                showLabels: true,
+                isRange : true
+            });
+        });
+    </script>
+</body>
+</html>

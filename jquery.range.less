@@ -1,0 +1,192 @@
+#gradient {
+  .horizontal(@startColor: #555, @endColor: #333) {
+    background-color: @endColor;
+    background-image: -moz-linear-gradient(left, @startColor, @endColor); // FF 3.6+
+    background-image: -webkit-gradient(linear, 0 0, 100% 0, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(left, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(left, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(to right, @startColor, @endColor); // Standard, IE10
+    background-repeat: repeat-x;
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",argb(@startColor),argb(@endColor))); // IE9 and down
+  }
+  .vertical(@startColor: #555, @endColor: #333) {
+    background-color: mix(@startColor, @endColor, 60%);
+    background-image: -moz-linear-gradient(top, @startColor, @endColor); // FF 3.6+
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(top, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(top, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(to bottom, @startColor, @endColor); // Standard, IE10
+    background-repeat: repeat-x;
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down
+  }
+  .directional(@startColor: #555, @endColor: #333, @deg: 45deg) {
+    background-color: @endColor;
+    background-repeat: repeat-x;
+    background-image: -moz-linear-gradient(@deg, @startColor, @endColor); // FF 3.6+
+    background-image: -webkit-linear-gradient(@deg, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(@deg, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(@deg, @startColor, @endColor); // Standard, IE10
+  }
+  .vertical-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) {
+    background-color: mix(@midColor, @endColor, 80%);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), color-stop(@colorStop, @midColor), to(@endColor));
+    background-image: -webkit-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    background-image: -moz-linear-gradient(top, @startColor, @midColor @colorStop, @endColor);
+    background-image: -o-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    background-image: linear-gradient(@startColor, @midColor @colorStop, @endColor);
+    background-repeat: no-repeat;
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down, gets no color-stop at all for proper fallback
+  }
+  .radial(@innerColor: #555, @outerColor: #333)  {
+    background-color: @outerColor;
+    background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(@innerColor), to(@outerColor));
+    background-image: -webkit-radial-gradient(circle, @innerColor, @outerColor);
+    background-image: -moz-radial-gradient(circle, @innerColor, @outerColor);
+    background-image: -o-radial-gradient(circle, @innerColor, @outerColor);
+    background-repeat: no-repeat;
+  }
+  .striped(@color: #555, @angle: 45deg) {
+    background-color: @color;
+    background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, rgba(255,255,255,.15)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255,255,255,.15)), color-stop(.75, rgba(255,255,255,.15)), color-stop(.75, transparent), to(transparent));
+    background-image: -webkit-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: -moz-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: -o-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+  }
+}
+
+.slider-container {
+    width: 300px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    .back-bar {
+        height: 10px;
+        position: relative;
+        .selected-bar {
+            position: absolute;
+            height: 100%;
+        }
+        .pointer {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            cursor: move;
+            opacity: 1;
+            z-index: 2;
+        }
+        .pointer-label {
+            position: absolute;
+            top: -17px;
+            font-size: 8px;
+            background: white;
+            white-space: nowrap;
+            line-height: 1;
+        }
+        .focused {
+            z-index: 10;
+        }
+    }
+    .clickable-dummy {
+        cursor: pointer;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .scale {
+        top: 2px;
+        position: relative;
+        span {
+            position: absolute;
+            height: 5px;
+            border-left: 1px solid #999;
+            font-size: 0;
+        }
+        ins {
+            font-size: 9px;
+            text-decoration: none;
+            position: absolute;
+            left: 0;
+            top: 5px;
+            color: #999;
+            line-height: 1;
+        }
+    }
+}
+.theme-green {
+    .back-bar {
+        height: 5px;
+        border-radius: 2px;
+        background-color: #eeeeee;
+        #gradient > .vertical(#eeeeee, #dddddd);
+        .selected-bar {
+            border-radius: 2px;
+            #gradient > .vertical(#bdfade, #76fabc);
+        }
+        .pointer {
+            width: 14px;
+            height: 14px;
+            top: -5px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid #AAA;
+            #gradient > .vertical(#eeeeee, #dddddd);
+            cursor: col-resize;
+        }
+        .pointer-label {
+            color: #999;
+        }
+        .focused {
+            color: #333;
+        }
+    }
+    .scale {
+        span {
+            border-left: 1px solid #e5e5e5;
+        }
+        ins {
+            color: #999;
+        }
+    }
+}
+
+.theme-blue {
+    .back-bar {
+        height: 5px;
+        border-radius: 2px;
+        background-color: #eeeeee;
+        #gradient > .vertical(#eeeeee, #dddddd);
+        .selected-bar {
+            border-radius: 2px;
+            #gradient > .vertical(#b1d1f9, #64a8f9);
+        }
+        .pointer {
+            width: 14px;
+            height: 14px;
+            top: -5px;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid #AAA;
+            #gradient > .vertical(#eeeeee, #dddddd);
+            cursor: col-resize;
+        }
+        .pointer-label {
+            color: #999;
+        }
+        .focused {
+            color: #333;
+        }
+    }
+    .scale {
+        span {
+            border-left: 1px solid #e5e5e5;
+        }
+        ins {
+            color: #999;
+        }
+    }
+}
