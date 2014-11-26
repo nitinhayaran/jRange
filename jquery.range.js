@@ -147,18 +147,18 @@
 				position = this.prcToPx(position);
 			}
 			if(pointer[0] === this.highPointer[0]){
-				highPos = position  - circleWidth;
+				highPos = Math.round(position  - circleWidth);
 			}else{
-				lowPos = position  - circleWidth;
+                lowPos = Math.round(position  - circleWidth);
 			}
-			pointer[animate?'animate':'css']({'left': (position  - circleWidth)});
+            pointer[animate?'animate':'css']({'left': Math.round(position  - circleWidth)});
 			if(this.isSingle()){
 				leftPos = 0;
 			}else{
 				leftPos = lowPos + circleWidth;
 			}
 			this.bar[animate?'animate':'css']({
-					'width' : highPos + circleWidth - leftPos,
+					'width' : Math.round(highPos + circleWidth - leftPos),
 					'left'	: leftPos
 				});
 			this.showPointerValue(pointer, position, animate);
