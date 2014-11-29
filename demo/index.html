@@ -137,7 +137,12 @@
                         	<p>this is used to show label on the pointer</p>
                         	<code>Default : "%s"</code>
                         	<p><code>String</code> : %s is replaced by its value, e.g., "%s days", "%s goats"</p>
-                        	<p><code>Function</code> : should return string label for a given value.</p>
+                        	<p>
+                                <code>Function</code> : format(value, pointer)
+                                <br>
+                                <code>return</code> : string label for a given value and pointer. <br>
+                                <code>pointer</code> could be 'low'/'high' if <code>isRange</code> is true, else undefined
+                            </p>
                         </td>
                     </tr>
                     <tr>

@@ -203,7 +203,8 @@
 			var text;
 			var value = this.positionToValue(position);
 			if($.isFunction(this.options.format)){
-				text = this.options.format(value);
+                var pointer = this.isSingle() ? undefined : (pointer.hasClass('low') ? 'low':'high');
+                text = this.options.format(value, pointer);
 			}else{
 				text = this.options.format.replace('%s', value);
 			}
