@@ -29,6 +29,7 @@
 			onstatechange : function(){},
 			isRange : false,
 			showLabels : true,
+			showScale : true,
 			step  : 1,
 			format: '%s',
 			theme : 'theme-green',
@@ -81,7 +82,9 @@
 				this.labels.hide();
 			}
 			this.attachEvents();
-			this.renderScale();
+			if(this.options.showScale){
+				this.renderScale();
+			}
 			this.setValue(this.options.value);
 		},
 		isSingle: function(){
