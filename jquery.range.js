@@ -33,7 +33,9 @@
 			step  : 1,
 			format: '%s',
 			theme : 'theme-green',
-			width : 300
+			width : 300,
+			minRange: 0,
+			maxRange: 'auto'
 		},
 		template : '<div class="slider-container">\
 			<div class="back-bar">\
@@ -103,7 +105,8 @@
 			if(e.which !== 1){return;}
 			e.stopPropagation(); e.preventDefault();
 			var pointer = $(e.target);
-			pointer.addClass('focused');
+			this.pointers.removeClass('last-active');
+			pointer.addClass('focused last-active');
 			this[(pointer.hasClass('low')?'low':'high') + 'Label'].addClass('focused');
 			$(document).on('mousemove.slider', $.proxy(this.onDrag, this, pointer));
 			$(document).on('mouseup.slider', $.proxy(this.onDragEnd, this));
