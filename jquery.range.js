@@ -283,6 +283,7 @@
 				options = typeof option === 'object' && option;
 			if (!data) {
 				$this.data('plugin_' + pluginName, (data = new jRange(this, options)));
+				$(window).resize(function() { data.setValue(data.getValue()); }); // Update slider position when window is resized to keep it in sync with scale
 			}
 			// if first argument is a string, call silimarly named function
 			// this gives flexibility to call functions of the plugin e.g.
