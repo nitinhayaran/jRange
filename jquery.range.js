@@ -45,23 +45,23 @@
             <div class="scale"></div>\
 		</div>',
 		init: function(node, options) {
-			this.options = $.extend({}, this.defaults, options);
-			this.inputNode = $(node);
+			this.options       = $.extend({}, this.defaults, options);
+			this.inputNode     = $(node);
 			this.options.value = this.inputNode.val() || (this.options.isRange ? this.options.from + ',' + this.options.from : this.options.from);
-			this.domNode = $(this.template);
+			this.domNode       = $(this.template);
 			this.domNode.addClass(this.options.theme);
 			this.inputNode.after(this.domNode);
 			this.domNode.on('change', this.onChange);
-			this.pointers = $('.pointer', this.domNode);
-			this.lowPointer = this.pointers.first();
-			this.highPointer = this.pointers.last();
-			this.labels = $('.pointer-label', this.domNode);
-			this.lowLabel = this.labels.first();
-			this.highLabel = this.labels.last();
-			this.scale = $('.scale', this.domNode);
-			this.bar = $('.selected-bar', this.domNode);
-			this.clickableBar = this.domNode.find('.clickable-dummy');
-			this.interval = this.options.to - this.options.from;
+			this.pointers      = $('.pointer', this.domNode);
+			this.lowPointer    = this.pointers.first();
+			this.highPointer   = this.pointers.last();
+			this.labels        = $('.pointer-label', this.domNode);
+			this.lowLabel      = this.labels.first();
+			this.highLabel     = this.labels.last();
+			this.scale         = $('.scale', this.domNode);
+			this.bar           = $('.selected-bar', this.domNode);
+			this.clickableBar  = this.domNode.find('.clickable-dummy');
+			this.interval      = this.options.to - this.options.from;
 			this.render();
 		},
 		render: function() {
