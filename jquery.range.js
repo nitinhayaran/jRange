@@ -33,7 +33,8 @@
 			step: 1,
 			format: '%s',
 			theme: 'theme-green',
-			width: 300
+			width: 300,
+			disable: false
 		},
 		template: '<div class="slider-container">\
 			<div class="back-bar">\
@@ -100,10 +101,9 @@
 			this.pointers.bind('dragstart', function(event) {
 				event.preventDefault();
 			});
-			// $(document).on('touchmove.slider', $.proxy(this.onDrag, this));
 		},
 		onDragStart: function(e) {
-			if (e.type === 'mousedown' && e.which !== 1) {
+			if ( this.options.disable || (e.type === 'mousedown' && e.which !== 1)) {
 				return;
 			}
 			e.stopPropagation();
@@ -134,6 +134,7 @@
 			$(document).off('.slider');
 		},
 		barClicked: function(e) {
+			if(this.options.disable) return;
 			var x = e.pageX - this.clickableBar.offset().left;
 			if (this.isSingle())
 				this.setPosition(this.pointers.last(), x, true, true);
@@ -181,6 +182,7 @@
 				'left': leftPos
 			});
 			this.showPointerValue(pointer, position, animate);
+			this.isReadonly();
 		},
 		// will be called from outside
 		setValue: function(value) {
@@ -268,6 +270,21 @@
 		},
 		getValue: function() {
 			return this.options.value;
+		},
+		isReadonly: function(){
+			this.domNode.toggleClass('slider-readonly', this.options.disable);
+		},
+		disable: function(){
+			this.options.disable = true;
+			this.isReadonly();
+		},
+		enable: function(){
+			this.options.disable = false;
+			this.isReadonly();
+		},
+		toggleDisable: function(){
+			this.options.disable = !this.options.disable;
+			this.isReadonly();
 		}
 	};
 

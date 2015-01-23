@@ -70,7 +70,7 @@
             width: 10px;
             height: 10px;
             background-color: red;
-            cursor: move;
+            cursor: col-resize;
             opacity: 1;
             z-index: 2;
             &.last-active{
@@ -115,6 +115,11 @@
             line-height: 1;
         }
     }
+    &.slider-readonly{
+        .clickable-dummy, .pointer {
+            cursor: auto;
+        }
+    }
 }
 .theme-green {
     .back-bar {
@@ -136,7 +141,6 @@
             border-radius: 10px;
             border: 1px solid #AAA;
             #gradient > .vertical(#eeeeee, #dddddd);
-            cursor: col-resize;
         }
         .pointer-label {
             color: #999;
@@ -175,7 +179,6 @@
             border-radius: 10px;
             border: 1px solid #AAA;
             #gradient > .vertical(#eeeeee, #dddddd);
-            cursor: col-resize;
         }
         .pointer-label {
             color: #999;
