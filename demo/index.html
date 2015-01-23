@@ -41,7 +41,7 @@
     from: 0,
     to: 100,
     step: 1,
-    scale: [0,50,100],
+    scale: [0,25,50,75,100],
     format: '%s',
     width: 300,
     showLabels: true
@@ -178,6 +178,20 @@
                         <td>
                             <code>Default : false</code>
                             <p>True if this is a range selector. If its a range the value of hidden input will be set comma-seperated, e.g., "25,75"</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>disable</td>
+                        <td>Optional</td>
+                        <td>Boolean</td>
+                        <td>
+                            <code>Default : false</code>
+                            <p>True if this is a disable(read only) range selector. You can also change disable status later by calling. </p>
+                            <code>
+                                $('.slider').jRange('disable');
+                                $('.slider').jRange('enable');
+                                $('.slider').jRange('toggleDisable');
+                            </code>
                         </td>
                     </tr>
                     <tr>
