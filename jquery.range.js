@@ -34,7 +34,8 @@
 			format: '%s',
 			theme: 'theme-green',
 			width: 300,
-			disable: false
+			disable: false,
+			snap: false
 		},
 		template: '<div class="slider-container">\
 			<div class="back-bar">\
@@ -71,7 +72,8 @@
 				console.log('jRange : no width found, returning');
 				return;
 			} else {
-				this.domNode.width(this.options.width || this.inputNode.width());
+				this.options.width = this.options.width || this.inputNode.width();
+				this.domNode.width(this.options.width);
 				this.inputNode.hide();
 			}
 
@@ -139,8 +141,13 @@
 			if (this.isSingle())
 				this.setPosition(this.pointers.last(), x, true, true);
 			else {
-				var pointer = Math.abs(parseInt(this.pointers.first().css('left'), 10) - x + this.pointers.first().width() / 2) < Math.abs(parseInt(this.pointers.last().css('left'), 10) - x + this.pointers.first().width() / 2) ?
-					this.pointers.first() : this.pointers.last();
+				var leftPos = parseInt(this.pointers.first().css('left'), 10),
+					rightPos =  parseInt(this.pointers.last().css('left'), 10),
+					width = this.pointers.first().width() / 2,
+					pointer = this.pointers.first();
+				if ( x > rightPos || Math.abs(leftPos - x + width) > Math.abs(rightPos - x + width) ){
+					pointer = this.pointers.last();
+				}
 				this.setPosition(pointer, x, true, true);
 			}
 		},
@@ -164,6 +171,14 @@
 			if (!isPx) {
 				position = this.prcToPx(position);
 			}
+			if(this.options.snap){
+				var expPos = this.correctPositionForSnap(position);
+				if(expPos === -1){
+					return;
+				}else{
+					position = expPos;
+				}
+			}
 			if (pointer[0] === this.highPointer[0]) {
 				highPos = Math.round(position - circleWidth);
 			} else {
@@ -184,9 +199,23 @@
 			this.showPointerValue(pointer, position, animate);
 			this.isReadonly();
 		},
+		correctPositionForSnap: function(position){
+			var currentValue = this.positionToValue(position) - this.options.from;
+			var diff = this.options.width / (this.interval / this.options.step),
+				expectedPosition = currentValue * diff;
+			if( position <= expectedPosition + diff / 2 && position >= expectedPosition - diff / 2){
+				return expectedPosition;
+			}else{
+				return -1;
+			}
+		},
 		// will be called from outside
 		setValue: function(value) {
 			var values = value.toString().split(',');
+			values[0] = Math.max(Math.min(values[0], this.options.from), this.options.to) + '';
+			if (values.length > 1){
+				values[1] = Math.max(Math.min(values[1], this.options.from), this.options.to) + '';
+			}
 			this.options.value = value;
 			var prc = this.valuesToPrc(values.length === 2 ? values : [0, values[0]]);
 			if (this.isSingle()) {
