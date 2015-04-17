@@ -202,7 +202,7 @@
 		correctPositionForSnap: function(position){
 			var currentValue = this.positionToValue(position) - this.options.from;
 			var diff = this.options.width / (this.interval / this.options.step),
-				expectedPosition = currentValue * diff;
+				expectedPosition = (currentValue / this.options.step) * diff;
 			if( position <= expectedPosition + diff / 2 && position >= expectedPosition - diff / 2){
 				return expectedPosition;
 			}else{
@@ -212,9 +212,9 @@
 		// will be called from outside
 		setValue: function(value) {
 			var values = value.toString().split(',');
-			values[0] = Math.max(Math.min(values[0], this.options.from), this.options.to) + '';
+			values[0] = Math.min(Math.max(values[0], this.options.from), this.options.to) + '';
 			if (values.length > 1){
-				values[1] = Math.max(Math.min(values[1], this.options.from), this.options.to) + '';
+				values[1] = Math.min(Math.max(values[1], this.options.from), this.options.to) + '';
 			}
 			this.options.value = value;
 			var prc = this.valuesToPrc(values.length === 2 ? values : [0, values[0]]);
@@ -293,7 +293,7 @@
 				}
 			}
 			if (this.inputNode.val() !== this.options.value) {
-				this.inputNode.val(this.options.value);
+				this.inputNode.val(this.options.value).change();
 				this.options.onstatechange.call(this, this.options.value);
 			}
 		},
