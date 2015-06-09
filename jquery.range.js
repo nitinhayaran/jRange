@@ -140,7 +140,7 @@
 			if (this.isSingle())
 				this.setPosition(this.pointers.last(), x, true, true);
 			else {
-				var pointer = Math.abs(parseFloat(this.pointers.first().css('left')) - x + this.pointers.first().width() / 2) < Math.abs(parseFlaot(this.pointers.last().css('left')) - x + this.pointers.first().width() / 2) ?
+				var pointer = Math.abs(parseFloat(this.pointers.first().css('left')) - x + this.pointers.first().width() / 2) < Math.abs(parseFloat(this.pointers.last().css('left')) - x + this.pointers.first().width() / 2) ?
 					this.pointers.first() : this.pointers.last();
 				this.setPosition(pointer, x, true, true);
 			}
