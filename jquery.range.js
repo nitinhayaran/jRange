@@ -202,7 +202,7 @@
 		correctPositionForSnap: function(position){
 			var currentValue = this.positionToValue(position) - this.options.from;
 			var diff = this.options.width / (this.interval / this.options.step),
-				expectedPosition = currentValue * diff;
+				expectedPosition = this.prcToPx(currentValue * diff);
 			if( position <= expectedPosition + diff / 2 && position >= expectedPosition - diff / 2){
 				return expectedPosition;
 			}else{
