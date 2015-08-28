@@ -139,8 +139,19 @@
 			if (this.isSingle())
 				this.setPosition(this.pointers.last(), x, true, true);
 			else {
-				var pointer = Math.abs(parseInt(this.pointers.first().css('left'), 10) - x + this.pointers.first().width() / 2) < Math.abs(parseInt(this.pointers.last().css('left'), 10) - x + this.pointers.first().width() / 2) ?
-					this.pointers.first() : this.pointers.last();
+				var firstLeft      	= parseInt(this.pointers.first().css('left'), 10),
+						firstHalfWidth 	= this.pointers.first().width() / 2,
+						lastLeft 			 	= parseInt(this.pointers.last().css('left'), 10),
+						lastHalfWidth  	= this.pointers.first().width() / 2,
+						leftSide        = Math.abs(firstLeft - x + firstHalfWidth),
+						rightSide       = Math.abs(lastLeft - x + lastHalfWidth),
+						pointer;
+
+				if(leftSide == rightSide) {
+					pointer = x < firstLeft ? this.pointers.first() : this.pointers.last();
+				} else {
+					pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
+				}
 				this.setPosition(pointer, x, true, true);
 			}
 		},
