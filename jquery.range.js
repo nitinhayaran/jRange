@@ -64,6 +64,35 @@
 			this.clickableBar  = this.domNode.find('.clickable-dummy');
 			this.interval      = this.options.to - this.options.from;
 			this.render();
+
+			/* set listeners for min and max input boxes if there are any */
+			if(this.options.inputForMin || this.options.inputForMax) {
+				this.hasInputs = true;
+				if(this.options.inputForMin) {
+					this.inputForMin = $(this.options.inputForMin).on("change",$.proxy(this.setValueFromInput,this));;
+				}
+				if(this.options.inputForMax) {
+					this.inputForMax = $(this.options.inputForMax).on("change",$.proxy(this.setValueFromInput,this));;
+				}
+				//$(this.options.inputForMin + "," + this.options.inputForMax).on("change",$.proxy(this.setValueFromInput,this));
+			}
+		},
+		setValueFromInput: function() {
+			var value = this.getValue().split(","),
+				min = parseInt(this.inputForMin.val(),10),
+				max = parseInt(this.inputForMax.val(),10);
+
+			var objMin = parseInt(value[0],10),
+				objMax = parseInt(value[1],10);
+
+			if(min < 0 || min > objMax) {
+				min = objMin;
+			}
+			if(max > this.options.to || max < objMin) {
+				max = objMax;
+			}
+
+			this.setValue(min + "," + max);
 		},
 		render: function() {
 			// Check if inputNode is visible, and have some width, so that we can set slider width accordingly.
@@ -155,6 +184,17 @@
 			}
 			var value = Math.min(Math.max(position, min), max);
 			self.setPosition(pointer, value, true);
+
+			/* Check if there are inputs assigned to the slider values and edit if there is */
+			if(self.hasInputs) {
+				var values = self.getValue().split(",");
+				if(self.options.inputForMin) {
+					self.inputForMin.val(values[0]);
+				}
+				if(self.options.inputForMax) {
+					self.inputForMax.val(values[1]);
+				}
+			}
 		},
 		setPosition: function(pointer, position, isPx, animate) {
 			var leftPos,
@@ -195,6 +235,13 @@
 				this.setPosition(this.lowPointer, prc[0]);
 				this.setPosition(this.highPointer, prc[1]);
 			}
+		},
+		setRange: function(to) {
+			this.options.to = to;
+			this.interval = this.options.to - this.options.from;
+			this.options.scale = [0,this.options.to];
+			this.setValue(this.getValue());
+			this.renderScale();
 		},
 		renderScale: function() {
 			var s = this.options.scale || [this.options.from, this.options.to];
@@ -270,6 +317,12 @@
 		},
 		getValue: function() {
 			return this.options.value;
+		},
+		getTo: function() {
+			return this.options.to;
+		},
+		getFrom: function() {
+			return this.options.from;
 		},
 		isReadonly: function(){
 			this.domNode.toggleClass('slider-readonly', this.options.disable);
