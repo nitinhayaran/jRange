@@ -22,6 +22,10 @@
 	'use strict';
 
 	var jRange = function() {
+		console.log("this V");
+		console.log(this);
+		console.log("arguments V");
+		console.log(arguments);
 		return this.init.apply(this, arguments);
 	};
 	jRange.prototype = {
@@ -186,13 +190,16 @@
 			self.setPosition(pointer, value, true);
 
 			/* Check if there are inputs assigned to the slider values and edit if there is */
-			if(self.hasInputs) {
-				var values = self.getValue().split(",");
-				if(self.options.inputForMin) {
-					self.inputForMin.val(values[0]);
+			self.setInputs();
+		},
+		setInputs: function() {
+			if(this.hasInputs) {
+				var values = this.getValue().split(",");
+				if(this.options.inputForMin) {
+					this.inputForMin.val(values[0]);
 				}
-				if(self.options.inputForMax) {
-					self.inputForMax.val(values[1]);
+				if(this.options.inputForMax) {
+					this.inputForMax.val(values[1]);
 				}
 			}
 		},
@@ -236,12 +243,24 @@
 				this.setPosition(this.highPointer, prc[1]);
 			}
 		},
-		setRange: function(to) {
+		setMaxRange: function(to) {
+			var values = this.getValueArray(),
+				changeValues = false;
+			if(to < values[1]) {
+				values[1] = to;
+				changeValues = true;
+			}
+			if(to < values[0]) {
+				values[0] = to;
+				changeValues = true;
+			}
+			if(changeValues) this.setValue(values.join(","));
 			this.options.to = to;
 			this.interval = this.options.to - this.options.from;
 			this.options.scale = [0,this.options.to];
 			this.setValue(this.getValue());
 			this.renderScale();
+			this.setInputs();
 		},
 		renderScale: function() {
 			var s = this.options.scale || [this.options.from, this.options.to];
@@ -318,6 +337,9 @@
 		getValue: function() {
 			return this.options.value;
 		},
+		getValueArray: function() {
+			return this.options.value.split(",");
+		},
 		getTo: function() {
 			return this.options.to;
 		},
@@ -361,7 +383,9 @@
 	$.fn[pluginName] = function(option) {
 		var args = arguments,
 			result;
-
+		if(option === "initiated") {
+			return this === undefined ? false : true;
+		}
 		this.each(function() {
 			var $this = $(this),
 				data = $.data(this, 'plugin_' + pluginName),
