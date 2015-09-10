@@ -22,10 +22,6 @@
 	'use strict';
 
 	var jRange = function() {
-		console.log("this V");
-		console.log(this);
-		console.log("arguments V");
-		console.log(arguments);
 		return this.init.apply(this, arguments);
 	};
 	jRange.prototype = {
@@ -50,6 +46,7 @@
             <div class="scale"></div>\
 		</div>',
 		init: function(node, options) {
+			console.log("init is running");
 			this.options       = $.extend({}, this.defaults, options);
 			this.inputNode     = $(node);
 			this.options.value = this.inputNode.val() || (this.options.isRange ? this.options.from + ',' + this.options.from : this.options.from);
@@ -67,28 +64,34 @@
 			this.bar           = $('.selected-bar', this.domNode);
 			this.clickableBar  = this.domNode.find('.clickable-dummy');
 			this.interval      = this.options.to - this.options.from;
-			this.render();
 
-			/* set listeners for min and max input boxes if there are any */
+			/*
+			 * Set listeners for min and max input boxes if there are any
+			 * Also assign the DOM nodes to variables
+			 */
 			if(this.options.inputForMin || this.options.inputForMax) {
 				this.hasInputs = true;
-				if(this.options.inputForMin) {
-					this.inputForMin = $(this.options.inputForMin).on("change",$.proxy(this.setValueFromInput,this));;
+				if(this.options.inputForMin || $(this.options.inputForMin).length) {
+					this.inputForMin = $(this.options.inputForMin).on("change",$.proxy(this.setValueFromInput,this));
 				}
-				if(this.options.inputForMax) {
-					this.inputForMax = $(this.options.inputForMax).on("change",$.proxy(this.setValueFromInput,this));;
+				if(this.options.inputForMax || $(this.options.inputForMax).length) {
+					this.inputForMax = $(this.options.inputForMax).on("change",$.proxy(this.setValueFromInput,this));
 				}
-				//$(this.options.inputForMin + "," + this.options.inputForMax).on("change",$.proxy(this.setValueFromInput,this));
 			}
+
+			this.render();
 		},
 		setValueFromInput: function() {
-			var value = this.getValue().split(","),
-				min = parseInt(this.inputForMin.val(),10),
-				max = parseInt(this.inputForMax.val(),10);
-
-			var objMin = parseInt(value[0],10),
+			/*
+			 * Take the values from the assigned max and min input boxes and apply to slider
+			 */
+			var value = this.getValueArray(),
+				min = parseInt(this.options.inputForMin ? this.inputForMin.val() : 0, 10),
+				max = parseInt(this.options.inputForMax ? this.inputForMax.val() : 0,10),
+				objMin = parseInt(value[0],10),
 				objMax = parseInt(value[1],10);
 
+			/* Make sure the values don't exceed the boundaries */
 			if(min < 0 || min > objMax) {
 				min = objMin;
 			}
@@ -96,12 +99,12 @@
 				max = objMax;
 			}
 
+			/* Do the actual setting */
 			this.setValue(min + "," + max);
 		},
 		render: function() {
 			// Check if inputNode is visible, and have some width, so that we can set slider width accordingly.
 			if (this.inputNode.width() === 0 && !this.options.width) {
-				console.log('jRange : no width found, returning');
 				return;
 			} else {
 				this.domNode.width(this.options.width || this.inputNode.width());
@@ -176,6 +179,9 @@
 					this.pointers.first() : this.pointers.last();
 				this.setPosition(pointer, x, true, true);
 			}
+
+			/* Check if there are inputs assigned to the slider values and edit if there is */
+			this.setInputs();
 		},
 		onChange: function(e, self, pointer, position) {
 			var min, max;
@@ -193,14 +199,13 @@
 			self.setInputs();
 		},
 		setInputs: function() {
-			if(this.hasInputs) {
-				var values = this.getValue().split(",");
-				if(this.options.inputForMin) {
-					this.inputForMin.val(values[0]);
-				}
-				if(this.options.inputForMax) {
-					this.inputForMax.val(values[1]);
-				}
+			/* Take the values from the slider and assign them to the assigned input boxes if they exist */
+			var values = this.getValueArray();
+			if(this.options.inputForMin) {
+				this.inputForMin.val(values[0]);
+			}
+			if(this.options.inputForMax) {
+				this.inputForMax.val(values[1]);
 			}
 		},
 		setPosition: function(pointer, position, isPx, animate) {
@@ -242,25 +247,55 @@
 				this.setPosition(this.lowPointer, prc[0]);
 				this.setPosition(this.highPointer, prc[1]);
 			}
-		},
-		setMaxRange: function(to) {
-			var values = this.getValueArray(),
-				changeValues = false;
-			if(to < values[1]) {
-				values[1] = to;
-				changeValues = true;
-			}
-			if(to < values[0]) {
-				values[0] = to;
-				changeValues = true;
-			}
-			if(changeValues) this.setValue(values.join(","));
-			this.options.to = to;
-			this.interval = this.options.to - this.options.from;
-			this.options.scale = [0,this.options.to];
-			this.setValue(this.getValue());
-			this.renderScale();
+
+			/* Set the values of the input boxes to the new values set in this function */
 			this.setInputs();
+		},
+		setRange: function(from,to) {
+			/* Set new upper and lower limits of the slider */
+
+			/* First check that from is less than to, otherwise we want to ignore this request as it won't work */
+			if(from < to) {
+				var values = this.getValueArray(),
+					changeValues = false;
+
+				/* Bring down the higher value to match the new upper limit, if it now exceeds the new upper limit */
+				if (to < values[1]) {
+					values[1] = to;
+					changeValues = true;
+				}
+                /* Do same as above with the lower value, but set it one lower so that the handles don't completely overlap */
+				if (to <= values[0]) {
+					values[0] = to - 1;
+					changeValues = true;
+				}
+
+                /* Bring up the lower value to match the new lower limit, if it now lower than the new lower limit */
+				if (from > values[0]) {
+					values[0] = from;
+					changeValues = true;
+				}
+
+                /* Do same as above with the lower value, but set it one higher so that the handles don't completely overlap */
+				if (from >= values[1]) {
+					values[1] = from + 1;
+					changeValues = true;
+				}
+
+                /* set the recalculated values */
+				if (changeValues) this.setValue(values.join(","));
+
+                /* reset all neccessary variables */
+				this.options.from = from;
+				this.options.to = to;
+				this.interval = this.options.to - this.options.from;
+				this.options.scale = [from, to];
+				this.setValue(this.getValue());
+				this.renderScale();
+
+                /* set values of text boxes if they exist */
+				this.setInputs();
+			}
 		},
 		renderScale: function() {
 			var s = this.options.scale || [this.options.from, this.options.to];
