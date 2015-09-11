@@ -46,7 +46,6 @@
             <div class="scale"></div>\
 		</div>',
 		init: function(node, options) {
-			console.log("init is running");
 			this.options       = $.extend({}, this.defaults, options);
 			this.inputNode     = $(node);
 			this.options.value = this.inputNode.val() || (this.options.isRange ? this.options.from + ',' + this.options.from : this.options.from);
