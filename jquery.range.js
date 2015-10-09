@@ -248,7 +248,7 @@
 		},
 		positionToValue: function(pos) {
 			var value = (pos / this.domNode.width()) * this.interval;
-			value = value + this.options.from;
+			value = parseFloat( value, 10 ) + parseFloat( this.options.from, 10 );
 			return Math.round(value / this.options.step) * this.options.step;
 		},
 		setInputValue: function(pointer, v) {
