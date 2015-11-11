@@ -34,7 +34,8 @@
 			format: '%s',
 			theme: 'theme-green',
 			width: 300,
-			disable: false
+			disable: false,
+			fitBounds:false
 		},
 		template: '<div class="slider-container">\
 			<div class="back-bar">\
@@ -232,7 +233,9 @@
 
 			var width = label.html(text).width(),
 				left = position - width / 2;
-			left = Math.min(Math.max(left, 0), this.options.width - width);
+			if(this.fitBounds){
+				left = Math.min(Math.max(left, 0), this.options.width - width);
+			}
 			label[animate ? 'animate' : 'css']({
 				left: left
 			});
