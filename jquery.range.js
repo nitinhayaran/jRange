@@ -27,6 +27,7 @@
 	jRange.prototype = {
 		defaults: {
 			onstatechange: function() {},
+      ondragend: function() {},
 			isRange: false,
 			showLabels: true,
 			showScale: true,
@@ -132,6 +133,7 @@
 			this.pointers.removeClass('focused');
 			this.labels.removeClass('focused');
 			$(document).off('.slider');
+		  this.options.ondragend.call(this, this.options.value);
 		},
 		barClicked: function(e) {
 			if(this.options.disable) return;
