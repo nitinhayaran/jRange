@@ -28,6 +28,7 @@
 		defaults: {
 			onstatechange: function() {},
       ondragend: function() {},
+      onbarclicked: function() {},
 			isRange: false,
 			showLabels: true,
 			showScale: true,
@@ -144,6 +145,7 @@
 				var pointer = Math.abs(parseInt(this.pointers.first().css('left'), 10) - x + this.pointers.first().width() / 2) < Math.abs(parseInt(this.pointers.last().css('left'), 10) - x + this.pointers.first().width() / 2) ?
 					this.pointers.first() : this.pointers.last();
 				this.setPosition(pointer, x, true, true);
+		    this.options.onbarclicked.call(this, this.options.value);
 			}
 		},
 		onChange: function(e, self, pointer, position) {
