@@ -67,7 +67,7 @@
 });</code></pre>
             		</div>
             		<div class="demo-output">
-            			<input class="range-slider" type="hidden" value="2,7"/>
+            			<input class="range-slider" type="hidden" value="25,75"/>
             		</div>
             	</div>
 
@@ -257,14 +257,13 @@
             });
             $('.range-slider').jRange({
                 from: 0,
-                to: 10,
+                to: 100,
                 step: 1,
-                scale: [0,2,4,6,8,10],
+                scale: [0,25,50,75,100],
                 format: '%s',
                 width: 300,
                 showLabels: true,
-                isRange : true,
-								snap: true
+                isRange : true
             });
         });
     </script>
