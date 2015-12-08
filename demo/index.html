@@ -213,7 +213,61 @@
                            <p>For single slider value is without comma, however for a range selector value is comma-seperated.</p>
                         </td>
                     </tr>
+                    <tr>
+                        <td>ondragend</td>
+                        <td>Optional</td>
+                        <td>Function</td>
+                        <td>
+                           <p>ondragend callback. Useful if you want to fire event just once per slider drag.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>onbarclicked</td>
+                        <td>Optional</td>
+                        <td>Function</td>
+                        <td>
+                           <p>called when user clicks on the bar</p>
+                        </td>
+                    </tr>
                 </table>
+
+								<h2>Modification</h2>
+                <h3>Change values on runtime</h3>
+                <p>Methods which you can call to dynamically modify current values and range.
+                <table class="plugin-options" width='900'>
+										<tr>
+											<th width="150">Method</th>
+											<th></th>
+											<th></th>
+											<th>Description</th>
+										</tr>
+                    <tr>
+                        <td>setValue</td>
+												<td></td>
+												<td></td>
+                        <td>
+													<p>sets the current value of the slider without changing its range, if you want to update the range as well use <code>updateRange</code> instead.</p>
+													<code>
+														$('.slider').jRange('setValue', '10,20');<br>
+														$('.slider').jRange('setValue', '10');
+													</code>
+												</td>
+                    </tr>
+                    <tr>
+                        <td>updateRange</td>
+												<td></td>
+												<td></td>
+                        <td>
+													<p>'updateRange' to change (min, max) value and interval after initialized.</p>
+													<code>
+														$('.slider').jRange('updateRange', '0,100');<br>
+														$('.slider').jRange('updateRange', '0,100', '25,50');<br>
+														$('.slider').jRange('updateRange', '0,100', 25);
+													</code>
+													<p>passing second parameter also sets its current value</p>
+												</td>
+                    </tr>
+								</table>
 
                 <div class="footer">
                     <a href="https://github.com/nitinhayaran/jRange" class="large-github">Get it from Github</a>
