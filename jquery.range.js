@@ -151,15 +151,12 @@
 			var min, max;
 			min = 0;
 			max = self.domNode.width();
-/*
-			if (self.isSingle()) {
-				min = 0;
-				max = self.domNode.width();
-			} else {
+
+			if (!self.isSingle()) {
 				min = pointer.hasClass('high') ? parseFloat(self.lowPointer.css("left")) + (self.lowPointer.width() / 2) : 0;
 				max = pointer.hasClass('low') ? parseFloat(self.highPointer.css("left")) + (self.highPointer.width() / 2) : self.domNode.width();
 			}
-*/
+
 			var value = Math.min(Math.max(position, min), max);
 			self.setPosition(pointer, value, true);
 		},
