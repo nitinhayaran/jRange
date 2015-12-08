@@ -357,10 +357,14 @@
 			this.options.disable = !this.options.disable;
 			this.isReadonly();
 		},
-		updateRange: function(value) {
-			var values = value.toString().split(',');
+		updateRange: function(range, value) {
+			var values = range.toString().split(',');
 			this.interval = parseInt(values[1]) - parseInt(values[0]);
-			this.setValue(value);
+			if(value){
+				this.setValue(value);
+			}else{
+				this.setValue(this.getValue());
+			}
 		}
 	};
 
