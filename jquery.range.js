@@ -27,6 +27,8 @@
 	jRange.prototype = {
 		defaults: {
 			onstatechange: function() {},
+      ondragend: function() {},
+      onbarclicked: function() {},
 			isRange: false,
 			showLabels: true,
 			showScale: true,
@@ -135,6 +137,7 @@
 				.trigger('rangeslideend');
 			this.labels.removeClass('focused');
 			$(document).off('.slider');
+		  this.options.ondragend.call(this, this.options.value);
 		},
 		barClicked: function(e) {
 			if(this.options.disable) return;
@@ -156,6 +159,7 @@
 					pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
 				}
 				this.setPosition(pointer, x, true, true);
+		    this.options.onbarclicked.call(this, this.options.value);
 			}
 		},
 		onChange: function(e, self, pointer, position) {
