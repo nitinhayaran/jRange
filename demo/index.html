@@ -38,17 +38,18 @@
             	<div class="demo-section">
             		<div class="demo-code">
             			<pre><code class="language-javascript">$('.single-slider').jRange({
-    from: 0,
-    to: 100,
-    step: 1,
-    scale: [0,25,50,75,100],
+    from: -2.0,
+    to: 2.0,
+    step: 0.5,
+    scale: [-2.0,-1.0,0.0,1.0,2.0],
     format: '%s',
     width: 300,
-    showLabels: true
+    showLabels: true,
+    snap: true
 });</code></pre>
             		</div>
             		<div class="demo-output">
-            			<input class="single-slider" type="hidden" value="25"/>
+            			<input class="single-slider" type="hidden" value="0.0"/>
             		</div>
             	</div>
             	<div class="demo-section">
@@ -180,6 +181,15 @@
                             <p>True if this is a range selector. If its a range the value of hidden input will be set comma-seperated, e.g., "25,75"</p>
                         </td>
                     </tr>
+										<tr>
+                        <td>snap</td>
+                        <td>Optional</td>
+                        <td>Boolean</td>
+                        <td>
+                            <code>Default : false</code>
+                            <p>True to snap slider to step values</p>
+                        </td>
+                    </tr>
                     <tr>
                         <td>disable</td>
                         <td>Optional</td>
@@ -235,13 +245,14 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('.single-slider').jRange({
-                from: 0,
-                to: 100,
-                step: 1,
-                scale: [0,25,50,75,100],
+                from: -2.0,
+                to: 2.0,
+                step: 0.5,
+                scale: [-2.0,-1.0,0.0,1.0,2.0],
                 format: '%s',
                 width: 300,
-                showLabels: true
+                showLabels: true,
+								snap: true
             });
             $('.range-slider').jRange({
                 from: 0,

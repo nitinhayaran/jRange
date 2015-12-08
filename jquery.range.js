@@ -34,13 +34,14 @@
 			format: '%s',
 			theme: 'theme-green',
 			width: 300,
-			disable: false
+			disable: false,
+			snap: false
 		},
 		template: '<div class="slider-container">\
 			<div class="back-bar">\
                 <div class="selected-bar"></div>\
-                <div class="pointer low"></div><div class="pointer-label">123456</div>\
-                <div class="pointer high"></div><div class="pointer-label">456789</div>\
+                <div class="pointer low"></div><div class="pointer-label low">123456</div>\
+                <div class="pointer high"></div><div class="pointer-label high">456789</div>\
                 <div class="clickable-dummy"></div>\
             </div>\
             <div class="scale"></div>\
@@ -71,7 +72,8 @@
 				console.log('jRange : no width found, returning');
 				return;
 			} else {
-				this.domNode.width(this.options.width || this.inputNode.width());
+				this.options.width = this.options.width || this.inputNode.width();
+				this.domNode.width(this.options.width);
 				this.inputNode.hide();
 			}
 
@@ -129,7 +131,8 @@
 			this.domNode.trigger('change', [this, pointer, position]);
 		},
 		onDragEnd: function(e) {
-			this.pointers.removeClass('focused');
+			this.pointers.removeClass('focused')
+				.trigger('rangeslideend');
 			this.labels.removeClass('focused');
 			$(document).off('.slider');
 		},
@@ -139,30 +142,50 @@
 			if (this.isSingle())
 				this.setPosition(this.pointers.last(), x, true, true);
 			else {
-				var pointer = Math.abs(parseInt(this.pointers.first().css('left'), 10) - x + this.pointers.first().width() / 2) < Math.abs(parseInt(this.pointers.last().css('left'), 10) - x + this.pointers.first().width() / 2) ?
-					this.pointers.first() : this.pointers.last();
+				var firstLeft      	= Math.abs(parseFloat(this.pointers.first().css('left'), 10)),
+						firstHalfWidth 	= this.pointers.first().width() / 2,
+						lastLeft 			 	= Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
+						lastHalfWidth  	= this.pointers.first().width() / 2,
+						leftSide        = Math.abs(firstLeft - x + firstHalfWidth),
+						rightSide       = Math.abs(lastLeft - x + lastHalfWidth),
+						pointer;
+
+				if(leftSide == rightSide) {
+					pointer = x < firstLeft ? this.pointers.first() : this.pointers.last();
+				} else {
+					pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
+				}
 				this.setPosition(pointer, x, true, true);
 			}
 		},
 		onChange: function(e, self, pointer, position) {
 			var min, max;
-			if (self.isSingle()) {
-				min = 0;
-				max = self.domNode.width();
-			} else {
-				min = pointer.hasClass('high') ? self.lowPointer.position().left + self.lowPointer.width() / 2 : 0;
-				max = pointer.hasClass('low') ? self.highPointer.position().left + self.highPointer.width() / 2 : self.domNode.width();
+			min = 0;
+			max = self.domNode.width();
+
+			if (!self.isSingle()) {
+				min = pointer.hasClass('high') ? parseFloat(self.lowPointer.css("left")) + (self.lowPointer.width() / 2) : 0;
+				max = pointer.hasClass('low') ? parseFloat(self.highPointer.css("left")) + (self.highPointer.width() / 2) : self.domNode.width();
 			}
+
 			var value = Math.min(Math.max(position, min), max);
 			self.setPosition(pointer, value, true);
 		},
 		setPosition: function(pointer, position, isPx, animate) {
-			var leftPos,
-				lowPos = this.lowPointer.position().left,
-				highPos = this.highPointer.position().left,
+			var leftPos, rightPos,
+				lowPos = parseFloat(this.lowPointer.css("left")),
+				highPos = parseFloat(this.highPointer.css("left")) || 0,
 				circleWidth = this.highPointer.width() / 2;
 			if (!isPx) {
 				position = this.prcToPx(position);
+			}
+			if(this.options.snap){
+				var expPos = this.correctPositionForSnap(position);
+				if(expPos === -1){
+					return;
+				}else{
+					position = expPos;
+				}
 			}
 			if (pointer[0] === this.highPointer[0]) {
 				highPos = Math.round(position - circleWidth);
@@ -176,17 +199,33 @@
 				leftPos = 0;
 			} else {
 				leftPos = lowPos + circleWidth;
+				rightPos = highPos + circleWidth;
 			}
+			var w = Math.round(highPos + circleWidth - leftPos);
 			this.bar[animate ? 'animate' : 'css']({
-				'width': Math.round(highPos + circleWidth - leftPos),
-				'left': leftPos
+				'width': Math.abs(w),
+				'left': (w>0) ? leftPos : leftPos + w
 			});
 			this.showPointerValue(pointer, position, animate);
 			this.isReadonly();
 		},
+		correctPositionForSnap: function(position){
+			var currentValue = this.positionToValue(position) - this.options.from;
+			var diff = this.options.width / (this.interval / this.options.step),
+				expectedPosition = (currentValue / this.options.step) * diff;
+			if( position <= expectedPosition + diff / 2 && position >= expectedPosition - diff / 2){
+				return expectedPosition;
+			}else{
+				return -1;
+			}
+		},
 		// will be called from outside
 		setValue: function(value) {
 			var values = value.toString().split(',');
+			values[0] = Math.min(Math.max(values[0], this.options.from), this.options.to) + '';
+			if (values.length > 1){
+				values[1] = Math.min(Math.max(values[1], this.options.from), this.options.to) + '';
+			}
 			this.options.value = value;
 			var prc = this.valuesToPrc(values.length === 2 ? values : [0, values[0]]);
 			if (this.isSingle()) {
@@ -214,15 +253,17 @@
 		getBarWidth: function() {
 			var values = this.options.value.split(',');
 			if (values.length > 1) {
-				return parseInt(values[1], 10) - parseInt(values[0], 10);
+				return parseFloat(values[1]) - parseFloat(values[0]);
 			} else {
-				return parseInt(values[0], 10);
+				return parseFloat(values[0]);
 			}
 		},
 		showPointerValue: function(pointer, position, animate) {
 			var label = $('.pointer-label', this.domNode)[pointer.hasClass('low') ? 'first' : 'last']();
 			var text;
 			var value = this.positionToValue(position);
+			// Is it higer or lower than it should be?
+
 			if ($.isFunction(this.options.format)) {
 				var type = this.isSingle() ? undefined : (pointer.hasClass('low') ? 'low' : 'high');
 				text = this.options.format(value, type);
@@ -239,17 +280,36 @@
 			this.setInputValue(pointer, value);
 		},
 		valuesToPrc: function(values) {
-			var lowPrc = ((values[0] - this.options.from) * 100 / this.interval),
-				highPrc = ((values[1] - this.options.from) * 100 / this.interval);
+			var lowPrc = ((parseFloat(values[0]) - parseFloat(this.options.from)) * 100 / this.interval),
+				highPrc = ((parseFloat(values[1]) - parseFloat(this.options.from)) * 100 / this.interval);
 			return [lowPrc, highPrc];
 		},
 		prcToPx: function(prc) {
 			return (this.domNode.width() * prc) / 100;
 		},
+		isDecimal: function() {
+			return ((this.options.value + this.options.from + this.options.to).indexOf(".")===-1) ? false : true;
+		},
 		positionToValue: function(pos) {
 			var value = (pos / this.domNode.width()) * this.interval;
-			value = value + this.options.from;
-			return Math.round(value / this.options.step) * this.options.step;
+			value = value + parseFloat(this.options.from);
+			if (this.isDecimal()) {
+				var final = Math.round(Math.round(value / this.options.step) * this.options.step *100)/100;
+				if (final!==0.0) {
+					final = '' + final;
+					if (final.indexOf(".")===-1) {
+						final = final + ".";
+					}
+					while (final.length - final.indexOf('.')<3) {
+						final = final + "0";
+					}
+				} else {
+					final = "0.00";
+				}
+				return final;
+			} else {
+				return Math.round(value / this.options.step) * this.options.step;
+			}
 		},
 		setInputValue: function(pointer, v) {
 			// if(!isChanged) return;
@@ -264,12 +324,19 @@
 				}
 			}
 			if (this.inputNode.val() !== this.options.value) {
-				this.inputNode.val(this.options.value);
+				this.inputNode.val(this.options.value)
+					.trigger('change');
 				this.options.onstatechange.call(this, this.options.value);
 			}
 		},
 		getValue: function() {
 			return this.options.value;
+		},
+		getOptions: function() {
+			return this.options;
+		},
+		getRange: function() {
+			return this.options.from + "," + this.options.to;
 		},
 		isReadonly: function(){
 			this.domNode.toggleClass('slider-readonly', this.options.disable);
@@ -287,20 +354,6 @@
 			this.isReadonly();
 		}
 	};
-
-	/*$.jRange = function (node, options) {
-		var jNode = $(node);
-		if(!jNode.data('jrange')){
-			jNode.data('jrange', new jRange(node, options));
-		}
-		return jNode.data('jrange');
-	};
-
-	$.fn.jRange = function (options) {
-		return this.each(function(){
-			$.jRange(this, options);
-		});
-	};*/
 
 	var pluginName = 'jRange';
 	// A really lightweight plugin wrapper around the constructor,
