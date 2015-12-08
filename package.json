@@ -1,0 +1,23 @@
+{
+  "name": "jquery-range",
+  "version": "1.0.0",
+  "description": "jQuery plugin to create range selector",
+  "main": "jquery.range-min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitinhayaran/jRange.git"
+  },
+  "keywords": [
+    "jquery",
+    "range"
+  ],
+  "author": "Nitin Hayaran <nitinhayaran@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nitinhayaran/jRange/issues"
+  },
+  "homepage": "https://github.com/nitinhayaran/jRange#readme"
+}

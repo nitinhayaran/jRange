@@ -27,6 +27,8 @@
 	jRange.prototype = {
 		defaults: {
 			onstatechange: function() {},
+      ondragend: function() {},
+      onbarclicked: function() {},
 			isRange: false,
 			showLabels: true,
 			showScale: true,
@@ -135,6 +137,7 @@
 				.trigger('rangeslideend');
 			this.labels.removeClass('focused');
 			$(document).off('.slider');
+		  this.options.ondragend.call(this, this.options.value);
 		},
 		barClicked: function(e) {
 			if(this.options.disable) return;
@@ -156,6 +159,7 @@
 					pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
 				}
 				this.setPosition(pointer, x, true, true);
+		    this.options.onbarclicked.call(this, this.options.value);
 			}
 		},
 		onChange: function(e, self, pointer, position) {
@@ -292,7 +296,7 @@
 		},
 		positionToValue: function(pos) {
 			var value = (pos / this.domNode.width()) * this.interval;
-			value = value + parseFloat(this.options.from);
+			value = parseFloat(value, 10) + parseFloat(this.options.from, 10);
 			if (this.isDecimal()) {
 				var final = Math.round(Math.round(value / this.options.step) * this.options.step *100)/100;
 				if (final!==0.0) {
@@ -352,6 +356,15 @@
 		toggleDisable: function(){
 			this.options.disable = !this.options.disable;
 			this.isReadonly();
+		},
+		updateRange: function(range, value) {
+			var values = range.toString().split(',');
+			this.interval = parseInt(values[1]) - parseInt(values[0]);
+			if(value){
+				this.setValue(value);
+			}else{
+				this.setValue(this.getValue());
+			}
 		}
 	};
 
