@@ -49,7 +49,7 @@
 });</code></pre>
             		</div>
             		<div class="demo-output">
-            			<input class="single-slider" type="hidden" value="2"/>
+            			<input class="single-slider" type="hidden" value="0.0"/>
             		</div>
             	</div>
             	<div class="demo-section">
@@ -246,14 +246,14 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('.single-slider').jRange({
-                from: 0,
-                to: 10,
-                step: 1,
-                scale: [0,2,4,6,8,10],
+                from: -2.0,
+                to: 2.0,
+                step: 0.5,
+                scale: [-2.0,-1.0,0,1.0,2.0],
                 format: '%s',
                 width: 300,
                 showLabels: true,
-                snap: true
+								snap: true
             });
             $('.range-slider').jRange({
                 from: 0,

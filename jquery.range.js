@@ -40,8 +40,8 @@
 		template: '<div class="slider-container">\
 			<div class="back-bar">\
                 <div class="selected-bar"></div>\
-                <div class="pointer low"></div><div class="pointer-label">123456</div>\
-                <div class="pointer high"></div><div class="pointer-label">456789</div>\
+                <div class="pointer low"></div><div class="pointer-label low">123456</div>\
+                <div class="pointer high"></div><div class="pointer-label high">456789</div>\
                 <div class="clickable-dummy"></div>\
             </div>\
             <div class="scale"></div>\
@@ -131,7 +131,8 @@
 			this.domNode.trigger('change', [this, pointer, position]);
 		},
 		onDragEnd: function(e) {
-			this.pointers.removeClass('focused');
+			this.pointers.removeClass('focused')
+				.trigger('rangeslideend');
 			this.labels.removeClass('focused');
 			$(document).off('.slider');
 		},
@@ -141,32 +142,31 @@
 			if (this.isSingle())
 				this.setPosition(this.pointers.last(), x, true, true);
 			else {
-				var leftPos = parseInt(this.pointers.first().css('left'), 10),
-					rightPos =  parseInt(this.pointers.last().css('left'), 10),
-					width = this.pointers.first().width() / 2,
-					pointer = this.pointers.first();
-				if ( x > rightPos || Math.abs(leftPos - x + width) > Math.abs(rightPos - x + width) ){
-					pointer = this.pointers.last();
-				}
+				var pointer = Math.abs(parseFloat(this.pointers.first().css('left')) - x + this.pointers.first().width() / 2) < Math.abs(parseFloat(this.pointers.last().css('left')) - x + this.pointers.first().width() / 2) ?
+					this.pointers.first() : this.pointers.last();
 				this.setPosition(pointer, x, true, true);
 			}
 		},
 		onChange: function(e, self, pointer, position) {
 			var min, max;
+			min = 0;
+			max = self.domNode.width();
+/*
 			if (self.isSingle()) {
 				min = 0;
 				max = self.domNode.width();
 			} else {
-				min = pointer.hasClass('high') ? self.lowPointer.position().left + self.lowPointer.width() / 2 : 0;
-				max = pointer.hasClass('low') ? self.highPointer.position().left + self.highPointer.width() / 2 : self.domNode.width();
+				min = pointer.hasClass('high') ? parseFloat(self.lowPointer.css("left")) + (self.lowPointer.width() / 2) : 0;
+				max = pointer.hasClass('low') ? parseFloat(self.highPointer.css("left")) + (self.highPointer.width() / 2) : self.domNode.width();
 			}
+*/
 			var value = Math.min(Math.max(position, min), max);
 			self.setPosition(pointer, value, true);
 		},
 		setPosition: function(pointer, position, isPx, animate) {
-			var leftPos,
-				lowPos = this.lowPointer.position().left,
-				highPos = this.highPointer.position().left,
+			var leftPos, rightPos,
+				lowPos = parseFloat(this.lowPointer.css("left")),
+				highPos = parseFloat(this.highPointer.css("left")) || 0,
 				circleWidth = this.highPointer.width() / 2;
 			if (!isPx) {
 				position = this.prcToPx(position);
@@ -191,10 +191,12 @@
 				leftPos = 0;
 			} else {
 				leftPos = lowPos + circleWidth;
+				rightPos = highPos + circleWidth;
 			}
+			var w = Math.round(highPos + circleWidth - leftPos);
 			this.bar[animate ? 'animate' : 'css']({
-				'width': Math.round(highPos + circleWidth - leftPos),
-				'left': leftPos
+				'width': Math.abs(w),
+				'left': (w>0) ? leftPos : leftPos + w
 			});
 			this.showPointerValue(pointer, position, animate);
 			this.isReadonly();
@@ -243,15 +245,17 @@
 		getBarWidth: function() {
 			var values = this.options.value.split(',');
 			if (values.length > 1) {
-				return parseInt(values[1], 10) - parseInt(values[0], 10);
+				return parseFloat(values[1]) - parseFloat(values[0]);
 			} else {
-				return parseInt(values[0], 10);
+				return parseFloat(values[0]);
 			}
 		},
 		showPointerValue: function(pointer, position, animate) {
 			var label = $('.pointer-label', this.domNode)[pointer.hasClass('low') ? 'first' : 'last']();
 			var text;
 			var value = this.positionToValue(position);
+			// Is it higer or lower than it should be?
+
 			if ($.isFunction(this.options.format)) {
 				var type = this.isSingle() ? undefined : (pointer.hasClass('low') ? 'low' : 'high');
 				text = this.options.format(value, type);
@@ -268,17 +272,36 @@
 			this.setInputValue(pointer, value);
 		},
 		valuesToPrc: function(values) {
-			var lowPrc = ((values[0] - this.options.from) * 100 / this.interval),
-				highPrc = ((values[1] - this.options.from) * 100 / this.interval);
+			var lowPrc = ((parseFloat(values[0]) - parseFloat(this.options.from)) * 100 / this.interval),
+				highPrc = ((parseFloat(values[1]) - parseFloat(this.options.from)) * 100 / this.interval);
 			return [lowPrc, highPrc];
 		},
 		prcToPx: function(prc) {
 			return (this.domNode.width() * prc) / 100;
 		},
+		isDecimal: function() {
+			return ((this.options.value + this.options.from + this.options.to).indexOf(".")===-1) ? false : true;
+		},
 		positionToValue: function(pos) {
 			var value = (pos / this.domNode.width()) * this.interval;
-			value = value + this.options.from;
-			return Math.round(value / this.options.step) * this.options.step;
+			value = value + parseFloat(this.options.from);
+			if (this.isDecimal()) {
+				var final = Math.round(Math.round(value / this.options.step) * this.options.step *100)/100;
+				if (final!==0.0) {
+					final = '' + final;
+					if (final.indexOf(".")===-1) {
+						final = final + ".";
+					}
+					while (final.length - final.indexOf('.')<3) {
+						final = final + "0";
+					}
+				} else {
+					final = "0.00";
+				}
+				return final;
+			} else {
+				return Math.round(value / this.options.step) * this.options.step;
+			}
 		},
 		setInputValue: function(pointer, v) {
 			// if(!isChanged) return;
@@ -293,12 +316,19 @@
 				}
 			}
 			if (this.inputNode.val() !== this.options.value) {
-				this.inputNode.val(this.options.value).change();
+				this.inputNode.val(this.options.value)
+					.trigger('change');
 				this.options.onstatechange.call(this, this.options.value);
 			}
 		},
 		getValue: function() {
 			return this.options.value;
+		},
+		getOptions: function() {
+			return this.options;
+		},
+		getRange: function() {
+			return this.options.from + "," + this.options.to;
 		},
 		isReadonly: function(){
 			this.domNode.toggleClass('slider-readonly', this.options.disable);
@@ -316,20 +346,6 @@
 			this.isReadonly();
 		}
 	};
-
-	/*$.jRange = function (node, options) {
-		var jNode = $(node);
-		if(!jNode.data('jrange')){
-			jNode.data('jrange', new jRange(node, options));
-		}
-		return jNode.data('jrange');
-	};
-
-	$.fn.jRange = function (options) {
-		return this.each(function(){
-			$.jRange(this, options);
-		});
-	};*/
 
 	var pluginName = 'jRange';
 	// A really lightweight plugin wrapper around the constructor,
