@@ -41,14 +41,15 @@
     from: 0,
     to: 100,
     step: 1,
-    scale: [0,25,50,75,100],
+    scale: [0,2,4,6,8,10],
     format: '%s',
     width: 300,
-    showLabels: true
+    showLabels: true,
+    snap: true
 });</code></pre>
             		</div>
             		<div class="demo-output">
-            			<input class="single-slider" type="hidden" value="25"/>
+            			<input class="single-slider" type="hidden" value="2"/>
             		</div>
             	</div>
             	<div class="demo-section">
@@ -57,15 +58,16 @@
     from: 0,
     to: 100,
     step: 1,
-    scale: [0,25,50,75,100],
+    scale: [0,2,4,6,8,10],
     format: '%s',
     width: 300,
     showLabels: true,
-    isRange : true
+    isRange : true,
+    snap: true
 });</code></pre>
             		</div>
             		<div class="demo-output">
-            			<input class="range-slider" type="hidden" value="25,75"/>
+            			<input class="range-slider" type="hidden" value="2,7"/>
             		</div>
             	</div>
 
@@ -180,6 +182,15 @@
                             <p>True if this is a range selector. If its a range the value of hidden input will be set comma-seperated, e.g., "25,75"</p>
                         </td>
                     </tr>
+										<tr>
+                        <td>snap</td>
+                        <td>Optional</td>
+                        <td>Boolean</td>
+                        <td>
+                            <code>Default : false</code>
+                            <p>True to snap slider to step values</p>
+                        </td>
+                    </tr>
                     <tr>
                         <td>disable</td>
                         <td>Optional</td>
@@ -236,22 +247,24 @@
         $(document).ready(function(){
             $('.single-slider').jRange({
                 from: 0,
-                to: 100,
+                to: 10,
                 step: 1,
-                scale: [0,25,50,75,100],
-                format: '%s',
-                width: 300,
-                showLabels: true
-            });
-            $('.range-slider').jRange({
-                from: 0,
-                to: 100,
-                step: 1,
-                scale: [0,25,50,75,100],
+                scale: [0,2,4,6,8,10],
                 format: '%s',
                 width: 300,
                 showLabels: true,
-                isRange : true
+                snap: true
+            });
+            $('.range-slider').jRange({
+                from: 0,
+                to: 10,
+                step: 1,
+                scale: [0,2,4,6,8,10],
+                format: '%s',
+                width: 300,
+                showLabels: true,
+                isRange : true,
+								snap: true
             });
         });
     </script>
