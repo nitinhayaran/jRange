@@ -27,8 +27,8 @@
 	jRange.prototype = {
 		defaults: {
 			onstatechange: function() {},
-      ondragend: function() {},
-      onbarclicked: function() {},
+			ondragend: function() {},
+			onbarclicked: function() {},
 			isRange: false,
 			showLabels: true,
 			showScale: true,
@@ -66,6 +66,7 @@
 			this.bar           = $('.selected-bar', this.domNode);
 			this.clickableBar  = this.domNode.find('.clickable-dummy');
 			this.interval      = this.options.to - this.options.from;
+			this.containLabel 	   = this.options.containLabel !== false;
 			this.render();
 		},
 		render: function() {
@@ -137,7 +138,7 @@
 				.trigger('rangeslideend');
 			this.labels.removeClass('focused');
 			$(document).off('.slider');
-		  this.options.ondragend.call(this, this.options.value);
+			this.options.ondragend.call(this, this.options.value);
 		},
 		barClicked: function(e) {
 			if(this.options.disable) return;
@@ -146,12 +147,12 @@
 				this.setPosition(this.pointers.last(), x, true, true);
 			else {
 				var firstLeft      	= Math.abs(parseFloat(this.pointers.first().css('left'), 10)),
-						firstHalfWidth 	= this.pointers.first().width() / 2,
-						lastLeft 			 	= Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
-						lastHalfWidth  	= this.pointers.first().width() / 2,
-						leftSide        = Math.abs(firstLeft - x + firstHalfWidth),
-						rightSide       = Math.abs(lastLeft - x + lastHalfWidth),
-						pointer;
+					firstHalfWidth 	= this.pointers.first().width() / 2,
+					lastLeft 			 	= Math.abs(parseFloat(this.pointers.last().css('left'), 10)),
+					lastHalfWidth  	= this.pointers.first().width() / 2,
+					leftSide        = Math.abs(firstLeft - x + firstHalfWidth),
+					rightSide       = Math.abs(lastLeft - x + lastHalfWidth),
+					pointer;
 
 				if(leftSide == rightSide) {
 					pointer = x < firstLeft ? this.pointers.first() : this.pointers.last();
@@ -159,7 +160,7 @@
 					pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
 				}
 				this.setPosition(pointer, x, true, true);
-		    this.options.onbarclicked.call(this, this.options.value);
+				this.options.onbarclicked.call(this, this.options.value);
 			}
 		},
 		onChange: function(e, self, pointer, position) {
@@ -277,7 +278,9 @@
 
 			var width = label.html(text).width(),
 				left = position - width / 2;
-			left = Math.min(Math.max(left, 0), this.options.width - width);
+			if (this.containLabel) {
+				left = Math.min(Math.max(left, 0), this.options.width - width);
+			}
 			label[animate ? 'animate' : 'css']({
 				left: left
 			});
@@ -292,7 +295,7 @@
 			return (this.domNode.width() * prc) / 100;
 		},
 		isDecimal: function() {
-			return ((this.options.value + this.options.from + this.options.to).indexOf(".")===-1) ? false : true;
+			return (String((this.options.value + this.options.from + this.options.to)).indexOf(".")===-1) ? false : true;
 		},
 		positionToValue: function(pos) {
 			var value = (pos / this.domNode.width()) * this.interval;
