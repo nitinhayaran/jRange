@@ -66,7 +66,7 @@
 			this.bar           = $('.selected-bar', this.domNode);
 			this.clickableBar  = this.domNode.find('.clickable-dummy');
 			this.interval      = this.options.to - this.options.from;
-			this.containLabel 	   = this.options.containLabel === true;
+			this.containLabel 	   = this.options.containLabel !== false;
 			this.render();
 		},
 		render: function() {
