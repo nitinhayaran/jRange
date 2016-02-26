@@ -277,7 +277,7 @@
 
 			var width = label.html(text).width(),
 				left = position - width / 2;
-			left = Math.min(Math.max(left, 0), this.options.width - width);
+			left = Math.min(Math.max(left, 0), this.domNode.width() - width);
 			label[animate ? 'animate' : 'css']({
 				left: left
 			});
