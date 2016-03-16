@@ -159,8 +159,8 @@
 					pointer = leftSide < rightSide ? this.pointers.first() : this.pointers.last();
 				}
 				this.setPosition(pointer, x, true, true);
-		    this.options.onbarclicked.call(this, this.options.value);
 			}
+			this.options.onbarclicked.call(this, this.options.value);
 		},
 		onChange: function(e, self, pointer, position) {
 			var min, max;
