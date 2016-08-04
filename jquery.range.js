@@ -51,7 +51,7 @@
 		init: function(node, options) {
 			this.options       = $.extend({}, this.defaults, options);
 			this.inputNode     = $(node);
-			this.options.value = this.inputNode.val() || (this.options.isRange ? this.options.from + ',' + this.options.from : this.options.from);
+			this.options.value = this.inputNode.val() || (this.options.isRange ? this.options.from + ',' + this.options.from : '' + this.options.from);
 			this.domNode       = $(this.template);
 			this.domNode.addClass(this.options.theme);
 			this.inputNode.after(this.domNode);
