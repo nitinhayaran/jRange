@@ -365,7 +365,11 @@
 			}else{
 				this.setValue(this.getValue());
 			}
-		}
+		},
+		setWidth: function(new_width){ // redraws slider with new width
+            		this.options.width = new_width;
+            		this.render();
+        	},
 	};
 
 	var pluginName = 'jRange';
