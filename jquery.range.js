@@ -32,6 +32,7 @@
 			isRange: false,
 			showLabels: true,
 			showScale: true,
+			scaleClicable: false,
 			step: 1,
 			format: '%s',
 			theme: 'theme-green',
@@ -244,14 +245,24 @@
 			var prc = Math.round((100 / (s.length - 1)) * 10) / 10;
 			var str = '';
 			for (var i = 0; i < s.length; i++) {
-				str += '<span style="left: ' + i * prc + '%">' + (s[i] != '|' ? '<ins>' + s[i] + '</ins>' : '') + '</span>';
+				str += '<span style="left: ' + i * prc + '%">' + (s[i] != '|' ? '<ins data-pos="' + i + '">' + s[i] + '</ins>' : '') + '</span>';
 			}
 			this.scale.html(str);
-
+      var self = this;
 			$('ins', this.scale).each(function() {
-				$(this).css({
-					marginLeft: -$(this).outerWidth() / 2
-				});
+				if (self.options.scaleClicable){
+					$(this).click(function(){
+						self.setValue(String($(this).data('pos')));
+					});
+					$(this).css({
+						marginLeft: -$(this).outerWidth() / 2,
+	          cursor: 'pointer'
+					});
+				}else{
+					$(this).css({
+						marginLeft: -$(this).outerWidth() / 2
+					});
+				}
 			});
 		},
 		getBarWidth: function() {
