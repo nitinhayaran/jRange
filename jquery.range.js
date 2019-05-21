@@ -358,12 +358,25 @@
 			this.isReadonly();
 		},
 		updateRange: function(range, value) {
-			var values = range.toString().split(',');
+			var values = range.toString().split(',');			
+			this.options.from = values[0];
+			this.options.to = values[1];
 			this.interval = parseInt(values[1]) - parseInt(values[0]);
 			if(value){
 				this.setValue(value);
 			}else{
 				this.setValue(this.getValue());
+			}
+			if (this.options.showScale) {
+				var len = this.options.scale ? this.options.scale.length : 2;
+				var step = this.interval / (len - 1)
+				var scale = [];
+				for (var i = 0; i < len; i += 1) {
+					var value = i * step + parseInt(this.options.from);
+					scale.push(value);
+				}
+				this.options.scale = scale;
+				this.renderScale();
 			}
 		}
 	};
