@@ -59,6 +59,7 @@
 			this.pointers      = $('.pointer', this.domNode);
 			this.lowPointer    = this.pointers.first();
 			this.highPointer   = this.pointers.last();
+			this.stepDecimals  = this.options.step % 1 ? this.options.step.toString().split('.')[1].length : 0;
 			this.labels        = $('.pointer-label', this.domNode);
 			this.lowLabel      = this.labels.first();
 			this.highLabel     = this.labels.last();
@@ -298,13 +299,14 @@
 			var value = (pos / this.domNode.width()) * this.interval;
 			value = parseFloat(value, 10) + parseFloat(this.options.from, 10);
 			if (this.isDecimal()) {
-				var final = Math.round(Math.round(value / this.options.step) * this.options.step *100)/100;
+				var decimalMultiplier = Math.pow(10, this.stepDecimals),
+					final = Math.round(Math.round(value / this.options.step) * this.options.step * decimalMultiplier)/decimalMultiplier;
 				if (final!==0.0) {
 					final = '' + final;
 					if (final.indexOf(".")===-1) {
 						final = final + ".";
 					}
-					while (final.length - final.indexOf('.')<3) {
+					while (final.length - final.indexOf('.') <= this.stepDecimals) {
 						final = final + "0";
 					}
 				} else {
