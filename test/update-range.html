@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>jRange updated bounds release regression</title>
+<link rel="stylesheet" href="../jquery.range.css">
+<input id="slider" value="80">
+<pre id="result">Running</pre>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="../jquery.range.js"></script>
+<script>
+var committed;
+$('#slider').jRange({from: 0, to: 100, width: 300, ondragend: function(value) { committed = value; }});
+$('.pointer.high').trigger($.Event('mousedown', {which: 1}));
+$('#slider').jRange('updateRange', '0,60');
+$(document).trigger('mouseup');
+var passed = committed === '60' && $('#slider').jRange('getRange') === '0,60';
+document.getElementById('result').textContent = passed ? 'PASS' : 'FAIL: release=' + committed + ', range=' + $('#slider').jRange('getRange');
+if (!passed) throw new Error('Release must use the updated range');
+</script>
