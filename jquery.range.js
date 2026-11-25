@@ -359,7 +359,9 @@
 		},
 		updateRange: function(range, value) {
 			var values = range.toString().split(',');
-			this.interval = parseInt(values[1]) - parseInt(values[0]);
+			this.options.from = parseFloat(values[0]);
+			this.options.to = parseFloat(values[1]);
+			this.interval = this.options.to - this.options.from;
 			if(value){
 				this.setValue(value);
 			}else{
